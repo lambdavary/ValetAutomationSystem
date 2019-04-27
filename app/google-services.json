@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1076345850474",
+    "firebase_url": "https://valetautomationsystem.firebaseio.com",
+    "project_id": "valetautomationsystem",
+    "storage_bucket": "valetautomationsystem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076345850474:android:772d506ed6a8286d",
+        "android_client_info": {
+          "package_name": "com.example.valetautomationsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076345850474-ruoahduugeoo5o20mbto4uo9ao8m955u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.valetautomationsystem",
+            "certificate_hash": "b9f99c7403c760c2e748329b899fc9e82d61b407"
+          }
+        },
+        {
+          "client_id": "1076345850474-du34ioeon4l9dul4iopls44ekcsp8v9s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrHs2I73FeroEd-PSlnoI4MjGlr94tn2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076345850474-du34ioeon4l9dul4iopls44ekcsp8v9s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
