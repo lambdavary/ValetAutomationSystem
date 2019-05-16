@@ -12,7 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BarcodeScanActivity"></activity>
+        <activity android:name=".DetailedValetActivity"></activity>
+        <activity android:name=".AdminMainActivity" />
+        <activity android:name=".ValetMainActivity" />
+        <activity android:name=".CommentActivity" />
+        <activity android:name=".PrepareCarActivity" />
+        <activity android:name=".BarcodeScanActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
