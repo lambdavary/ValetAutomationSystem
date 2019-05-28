@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TextView welcomeTextField = null;
@@ -31,19 +33,23 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private Button prepareCarButton = null;
     private FirebaseDatabase database = null;
     private DatabaseReference reference = null;
+    private DatabaseReference reference2 = null;
+    private DatabaseReference reference3 = null;
     private String barcodeValue = null;
     private Intent intent = null;
     private StringBuilder stringBuilder = null;
     private String welcomeText = "";
     private Spinner spinner = null;
-    private String[] names = {"New York", "Las Vegas", "Los Angles", "San Francisco"};
+    private int index = 0;
+    private String[] names = {"", "", "", ""};
+    private ArrayList<String> freeSpaces = null;
+    private ArrayList<String> totalSpaces = null;
     private boolean status = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-
 
         welcomeTextField = findViewById(R.id.welcomeTextField);
         spaceTextField = findViewById(R.id.spaceTextField);
@@ -63,6 +69,32 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         welcomeText = stringBuilder.toString();
         welcomeTextField.setText(welcomeText);
 
+        reference2 = database.getReference("restaurants");
+        reference3 = database.getReference("restaurants");
+
+        freeSpaces = new ArrayList<>();
+        totalSpaces = new ArrayList<>();
+        reference2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                int index = 0;
+                for (DataSnapshot child : children) {
+                    names[index++] = child.getKey();
+                    Log.v("yemek", "" + child.toString());
+                    String totalSpace = child.child("totalSpace").getValue().toString();
+                    String freeSpace = child.child("freeSpace").getValue().toString();
+                    totalSpaces.add(totalSpace);
+                    freeSpaces.add(freeSpace);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         spinner = findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, names);
@@ -75,9 +107,20 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v.getId() == qrButton.getId()) {
+            index = spinner.getSelectedItemPosition();
             Intent intent = new Intent(WelcomeActivity.this, BarcodeScanActivity.class);
             startActivityForResult(intent, 0);
-        }else if (v.getId() == prepareCarButton.getId()){
+        } else if (v.getId() == prepareCarButton.getId()) {
+            freeSpaces.set(index, String.valueOf(Integer.parseInt(freeSpaces.get(index)) + 1));
+            reference2.child(names[index]).child("freeSpace").setValue(freeSpaces.get(index));
+            if (index == 0)
+                spaceTextField.setText(freeSpaces.get(0) + "/" + totalSpaces.get(0));
+            else if (index == 1)
+                spaceTextField.setText(freeSpaces.get(1) + "/" + totalSpaces.get(1));
+            else if (index == 2)
+                spaceTextField.setText(freeSpaces.get(2) + "/" + totalSpaces.get(2));
+            else if (index == 3)
+                spaceTextField.setText(freeSpaces.get(3) + "/" + totalSpaces.get(3));
             Intent intent = new Intent(WelcomeActivity.this, PrepareCarActivity.class);
             startActivity(intent);
         }
@@ -99,6 +142,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                             final Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                             for (DataSnapshot child : children) {
                                 if (child.getValue().equals(barcodeValue)) {
+                                    freeSpaces.set(index, String.valueOf(Integer.parseInt(freeSpaces.get(index)) - 1));
+                                    reference2.child(names[index]).child("freeSpace").setValue(freeSpaces.get(index));
+                                    Log.v("bos deger", "" + freeSpaces.get(index));
                                     Toast.makeText(getApplicationContext(), "valet is found!!!", Toast.LENGTH_LONG).show();
                                     status = true;
                                     checkStatus(child.getValue().toString());
@@ -122,16 +168,20 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        int pos = parent.getSelectedItemPosition();
+        final int pos = parent.getSelectedItemPosition();
         Log.v("position", "pos:" + pos);
-        if (pos == 0)
-            spaceTextField.setText("35/50");
-        else if (pos == 1)
-            spaceTextField.setText("25 / 35");
-        else if (pos == 2)
-            spaceTextField.setText("10 / 20");
-        else if (pos == 3)
-            spaceTextField.setText("100/150");
+
+        if (freeSpaces.size() != 0 && totalSpaces.size() != 0) {
+            if (pos == 0)
+                spaceTextField.setText(freeSpaces.get(0) + "/" + totalSpaces.get(0));
+            else if (pos == 1)
+                spaceTextField.setText(freeSpaces.get(1) + "/" + totalSpaces.get(1));
+            else if (pos == 2)
+                spaceTextField.setText(freeSpaces.get(2) + "/" + totalSpaces.get(2));
+            else if (pos == 3)
+                spaceTextField.setText(freeSpaces.get(3) + "/" + totalSpaces.get(3));
+        }
+
     }
 
     @Override
@@ -139,17 +189,26 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public void checkStatus(String name){
-        if (status){
+    public void checkStatus(String name) {
+        if (status) {
             statusTextField.setTextSize(12);
             statusTextField.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             statusTextField.setText("Your car is taken by " + name + " valet.");
+            if (index == 0)
+                spaceTextField.setText(freeSpaces.get(0) + "/" + totalSpaces.get(0));
+            else if (index == 1)
+                spaceTextField.setText(freeSpaces.get(1) + "/" + totalSpaces.get(1));
+            else if (index == 2)
+                spaceTextField.setText(freeSpaces.get(2) + "/" + totalSpaces.get(2));
+            else if (index == 3)
+                spaceTextField.setText(freeSpaces.get(3) + "/" + totalSpaces.get(3));
+
         } else
             statusTextField.setText("You are on idle state.");
     }
 
-    public void activateButton(){
-        if (status){
+    public void activateButton() {
+        if (status) {
             qrButton.setVisibility(View.INVISIBLE);
             prepareCarButton.setVisibility(View.VISIBLE);
         }
