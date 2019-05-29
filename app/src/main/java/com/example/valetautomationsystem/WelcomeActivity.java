@@ -1,9 +1,13 @@
 package com.example.valetautomationsystem;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +49,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<String> freeSpaces = null;
     private ArrayList<String> totalSpaces = null;
     private boolean status = false;
+    private final String id = "not";
+    private final int not_id = 001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +67,15 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("valets");
 
+        spaceTextField.setText("0/0");
+
         stringBuilder = new StringBuilder();
         intent = getIntent();
         Log.v("intent message", "mes:" + intent.getStringExtra("zimbirti"));
 
-        stringBuilder.append("Hi ").append(intent.getStringExtra("zimbirti")).append("! Welcome to VAS.");
-        welcomeText = stringBuilder.toString();
-        welcomeTextField.setText(welcomeText);
+        //stringBuilder.append("Hi ").append(intent.getStringExtra("zimbirti")).append("! Welcome to VAS.");
+        //welcomeText = stringBuilder.toString();
+        welcomeTextField.setText("Hi!, welcome to VAS.");
 
         reference2 = database.getReference("restaurants");
         reference3 = database.getReference("restaurants");
@@ -107,6 +115,16 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v.getId() == qrButton.getId()) {
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    display();
+                }
+            }, 10000);
+
+
             index = spinner.getSelectedItemPosition();
             Intent intent = new Intent(WelcomeActivity.this, BarcodeScanActivity.class);
             startActivityForResult(intent, 0);
@@ -212,6 +230,28 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             qrButton.setVisibility(View.INVISIBLE);
             prepareCarButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void display(){
+
+
+        Intent notificationIntent = new Intent(this, CarWashActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, id);
+        builder.setSmallIcon(R.drawable.common_google_signin_btn_text_dark);
+        builder.setContentTitle("Do you want to wash your car?");
+        builder.setContentText("Click to see the prices");
+        builder.setAutoCancel(true);
+        builder.setContentIntent(pendingIntent);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+// notificationId is a unique int for each notification that you must define
+        notificationManager.notify(not_id, builder.build());
+
+
     }
 
 }

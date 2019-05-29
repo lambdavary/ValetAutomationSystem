@@ -7,12 +7,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/valet"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailedValetActivity"></activity>
+        <activity android:name=".AppInfoActivity"></activity>
+        <activity android:name=".PaymentActivity" />
+        <activity android:name=".CarWashActivity" />
+        <activity android:name=".DetailedValetActivity" />
         <activity android:name=".AdminMainActivity" />
         <activity android:name=".ValetMainActivity" />
         <activity android:name=".CommentActivity" />

@@ -57,7 +57,8 @@ public class AdminMainActivity extends AppCompatActivity implements View.OnClick
                 }
             });
         } else if (v.getId() == appInfoButton.getId()) {
-
+            Intent intent1 = new Intent(AdminMainActivity.this, AppInfoActivity.class);
+            startActivity(intent1);
         } else {
 
         }

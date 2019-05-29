@@ -26,7 +26,7 @@ public class PrepareCarActivity extends AppCompatActivity implements View.OnClic
         carTakenButton.setOnClickListener(this);
         timerTextField = findViewById(R.id.timerTextField);
         stateTextField = findViewById(R.id.stateTextField);
-        mTimeLeftInMillis = 5000;
+        mTimeLeftInMillis = 120000;
 
         new CountDownTimer(mTimeLeftInMillis, 1000){
 
